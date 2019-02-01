@@ -14,7 +14,7 @@ namespace ElasticScanner
             _logger.Info("Connecting to {0}", url);
         }
 
-        public void SearchAndAnalyze(string url, string index, string phrase, Action<ISearchResponse<logevent>> documentAction)
+        public void SearchAndAnalyze(string url, string index, string phrase, Action<ISearchResponse<logevent>> documentAction, int size = 10000)
         {
             using (var settings = new ConnectionSettings(new Uri(url)).DefaultIndex(index))
             {
@@ -32,7 +32,7 @@ namespace ElasticScanner
 
                 //var searchRequest = new SearchRequest<logevent>(index)
                 //{
-                //    Size = 3000,
+                //    Size = size,
                 //    From = 0,
                 //    Query = new BoolQuery { Must = mustClauses }
                 //};
@@ -42,7 +42,7 @@ namespace ElasticScanner
 
                 //var response = client.Search<logevent>(s => s
                 //    .From(0)
-                //    .Size(10000)
+                //    .Size(size)
                 //    .Query(q => q
                 //        .Match(m => m
                 //            .Field(f => f.Message)
@@ -53,7 +53,7 @@ namespace ElasticScanner
 
                 //var response = client.Search<logevent>(s => s
                 //    .From(0)
-                //    .Size(10000)
+                //    .Size(size)
                 //    .Query(q => q
                 //        .Regexp(m => m
                 //            .Field(f => f.Message)
@@ -64,7 +64,7 @@ namespace ElasticScanner
 
                 //var response = client.Search<logevent>(s => s
                 //    .From(0)
-                //    .Size(10)
+                //    .Size(size)
                 //    .Query(q => q
                 //        .Regexp(m => m
                 //            .Name("output")
@@ -84,7 +84,7 @@ namespace ElasticScanner
 
                 //var response = client.Search<logevent>(s => s
                 //    .From(0)
-                //    .Size(10000)
+                //    .Size(size)
                 //    .Query(q => q
                 //        .Bool(b => b
                 //            .Must(m => m.MatchPhrase(x => x.Field(f => f.Message).Query("Output for passenger search for Givenname")))
@@ -95,7 +95,7 @@ namespace ElasticScanner
 
                 var response = client.Search<logevent>(s => s
                     .From(0)
-                    .Size(10000)
+                    .Size(size)
                     .Query(q => q
                         .MatchPhrase(m => m
                             .Field(f => f.Message)

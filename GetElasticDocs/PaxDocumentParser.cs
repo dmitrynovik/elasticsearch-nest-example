@@ -9,16 +9,19 @@ namespace ElasticScanner
     {
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
 
-        public (string, string) FindPassengerNameMismatch(string content)
+        private (string, string, string, string) Empty => ("", "", "", "");
+
+        public (string, string, string, string) FindPassengerNameMismatch(logevent @event)
         {
+            var content = @event.Message;
             try
             {
                 if (!content.StartsWith("Output for passenger search for Givenname"))
-                    return ("", "");
+                    return Empty;
 
                 var surname = new Regex("Surname\\: [A-Z\\s]+\\,").Match(content);
                 if (!surname.Success)
-                    return ("", "");
+                    return Empty;
 
                 var firstSurname = surname.Value?
                     .Replace("Surname: ", "")?
@@ -29,7 +32,7 @@ namespace ElasticScanner
 
                 var onePassengerRecord = new Regex(@"Basic search Retrieved one passenger record for [A-Z\s]+").Match(content);
                 if (!onePassengerRecord.Success)
-                    return ("", "");
+                    return Empty;
 
                 var secondSurname = onePassengerRecord.Value
                     .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)?
@@ -37,17 +40,17 @@ namespace ElasticScanner
                     ?.ToUpperInvariant();
 
                 if (secondSurname == null)
-                    return ("", "");
+                    return Empty;
 
                 if (secondSurname != firstSurname)
-                    return (firstSurname, secondSurname);
+                    return (firstSurname, secondSurname, @event.Timestamp, @event.CorrelationId);
             }
             catch (Exception e)
             {
                 _logger.Error(e);
             }
 
-            return ("", "");
+            return Empty;
         }
     }
 }

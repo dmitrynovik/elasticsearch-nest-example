@@ -28,15 +28,13 @@ namespace ElasticScanner
                         {
                             foreach (var hit in response.Hits)
                             {
-                                var content = hit.Source.Message;
-                                var mismatch = new PaxDocumentParser().FindPassengerNameMismatch(content);
+                                var mismatch = new PaxDocumentParser().FindPassengerNameMismatch(hit.Source);
                                 if (!string.IsNullOrEmpty(mismatch.Item2))
                                 {
-                                    Logger.Error($"Mismatch found: [{mismatch.Item1}, {mismatch.Item2}]");
-                                    new FileWriter(index).Write(hit.Id, content);
+                                    Logger.Error($"|Mismatch found: [{mismatch.Item1}, {mismatch.Item2}]|{mismatch.Item3}|{mismatch.Item4}");
+                                    new FileWriter(index).Write(hit.Id, hit.Source.Message);
                                 }
                             }
-
                         });
                     }
                     catch (Exception e)
