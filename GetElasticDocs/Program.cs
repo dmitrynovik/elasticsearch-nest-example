@@ -24,12 +24,12 @@ namespace ElasticScanner
                     var index = $"logstash-2019.01.{i:D2}";
                     try
                     {
-                        search.SearchAndAnalyze(url, index, response =>
+                        search.SearchAndAnalyze(url, index, "one passenger record", response =>
                         {
                             foreach (var hit in response.Hits)
                             {
                                 var content = hit.Source.Message;
-                                var mismatch = new DocumentParser().Parse(content);
+                                var mismatch = new PaxDocumentParser().FindPassengerNameMismatch(content);
                                 if (!string.IsNullOrEmpty(mismatch.Item2))
                                 {
                                     Logger.Error($"Mismatch found: [{mismatch.Item1}, {mismatch.Item2}]");

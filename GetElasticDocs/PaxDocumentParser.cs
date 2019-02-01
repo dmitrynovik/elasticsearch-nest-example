@@ -5,11 +5,11 @@ using NLog;
 
 namespace ElasticScanner
 {
-    public class DocumentParser
+    public class PaxDocumentParser
     {
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
 
-        public (string, string) Parse(string content)
+        public (string, string) FindPassengerNameMismatch(string content)
         {
             try
             {

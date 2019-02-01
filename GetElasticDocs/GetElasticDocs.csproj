@@ -75,8 +75,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DocumentParser.cs" />
-    <Compile Include="DocumentParserTest.cs" />
+    <Compile Include="PaxDocumentParser.cs" />
+    <Compile Include="PaxDocumentParserTest.cs" />
     <Compile Include="FileWriter.cs" />
     <Compile Include="Logevent.cs" />
     <Compile Include="Program.cs" />

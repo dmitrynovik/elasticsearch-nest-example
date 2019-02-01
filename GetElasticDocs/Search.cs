@@ -14,7 +14,7 @@ namespace ElasticScanner
             _logger.Info("Connecting to {0}", url);
         }
 
-        public void SearchAndAnalyze(string url, string index, Action<ISearchResponse<logevent>> documentAction)
+        public void SearchAndAnalyze(string url, string index, string phrase, Action<ISearchResponse<logevent>> documentAction)
         {
             using (var settings = new ConnectionSettings(new Uri(url)).DefaultIndex(index))
             {
@@ -99,7 +99,7 @@ namespace ElasticScanner
                     .Query(q => q
                         .MatchPhrase(m => m
                             .Field(f => f.Message)
-                            .Query("one passenger record")
+                            .Query(phrase)
                         )
                     )
                 );
