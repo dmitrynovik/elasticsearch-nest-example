@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Nest;
 using NLog;
 
@@ -12,23 +11,10 @@ namespace ElasticScanner
         public Search(string url)
         {
             if (string.IsNullOrWhiteSpace(url)) throw new ArgumentNullException(nameof(url));
-
             _logger.Info("Connecting to {0}", url);
-
-            for (int i = 27; i <= 27; i++)
-            {
-                try
-                {
-                    SearchAndAnalyze(url, $"logstash-2019.01.{i:D2}");
-                }
-                catch (Exception e)
-                {
-                    _logger.Error(e);
-                }
-            }
         }
 
-        private void SearchAndAnalyze(string url, string index)
+        public void SearchAndAnalyze(string url, string index, Action<ISearchResponse<logevent>> documentAction)
         {
             using (var settings = new ConnectionSettings(new Uri(url)).DefaultIndex(index))
             {
@@ -119,16 +105,8 @@ namespace ElasticScanner
                 );
 
                 _logger.Info($"{index} got {response.Hits.Count} hits");
-                foreach (var hit in response.Hits)
-                {
-                    var content = hit.Source.Message;
-                    var mismatch = new DocumentParser().Parse(content);
-                    if (!string.IsNullOrEmpty(mismatch.Item2))
-                    {
-                        _logger.Error($"Mismatch found: [{mismatch.Item1}, {mismatch.Item2}]");
-                        new FileWriter(index).Write(hit.Id, content);
-                    }
-                }
+
+                documentAction?.Invoke(response);
             }
         }
     }
