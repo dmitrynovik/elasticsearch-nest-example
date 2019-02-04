@@ -20,95 +20,22 @@ namespace ElasticScanner
             using (var settings = new ConnectionSettings(new Uri(url)).DefaultIndex(index))
             {
                 var client = new ElasticClient(settings);
-
                 _logger.Info("Searching {0} -> {1}", url, index);
                 var watch = Stopwatch.StartNew();
-
-                //var mustClauses = new List<QueryContainer>
-                //{
-                //    new FuzzyQuery
-                //    {
-                //        Field = new Field("Message"), Value = "Output for passenger search for Givenname*"
-                //    }
-                //};
-
-                //var searchRequest = new SearchRequest<logevent>(index)
-                //{
-                //    Size = size,
-                //    From = 0,
-                //    Query = new BoolQuery { Must = mustClauses }
-                //};
-
-                //var response = client.Search<logevent>(searchRequest);
-                //.Query("one passenger record")
-
-                //var response = client.Search<logevent>(s => s
-                //    .From(0)
-                //    .Size(size)
-                //    .Query(q => q
-                //        .Match(m => m
-                //            .Field(f => f.Message)
-                //            .Query("one passenger record")
-                //        )
-                //    )
-                //);
-
-                //var response = client.Search<logevent>(s => s
-                //    .From(0)
-                //    .Size(size)
-                //    .Query(q => q
-                //        .Regexp(m => m
-                //            .Field(f => f.Message)
-                //            .Value("one passenger record")
-                //        )
-                //    )
-                //);
-
-                //var response = client.Search<logevent>(s => s
-                //    .From(0)
-                //    .Size(size)
-                //    .Query(q => q
-                //        .Regexp(m => m
-                //            .Name("output")
-                //            .Field(f => f.Message)
-                //            .Value("^Output")
-                //        )
-                //    )
-                //);
-
-                //var docs = client.Search<logevent>(b => b
-                //    .Query(q => q
-                //        .Regexp(fq => fq
-
-                //        )
-                //    )
-                //);
-
-                //var response = client.Search<logevent>(s => s
-                //    .From(0)
-                //    .Size(size)
-                //    .Query(q => q
-                //        .Bool(b => b
-                //            .Must(m => m.MatchPhrase(x => x.Field(f => f.Message).Query("Output for passenger search for Givenname")))
-                //            .Must(m => m.MatchPhrase(x => x.Field(f => f.Message).Query("one passenger record")))
-                //        )
-                //    )
-                //);
 
                 var response = client.Search<logevent>(s => s
                     .From(0)
                     .Size(size)
                     .Query(q => q
-                        .MatchPhrase(m => m
-                            .Field(f => f.Message)
-                            .Query(phrase)
+                        .Bool(b => b
+                            .Must(m => m.MatchPhrase(x => x.Field(f => f.Message).Query("Output for passenger search for Givenname")))
+                            .Must(m => m.MatchPhrase(x => x.Field(f => f.Message).Query("one passenger record")))
                         )
                     )
                 );
 
                 watch.Stop();
                 _logger.Info($"{index} got {response.Hits.Count} hits, time: {watch.Elapsed}");
-
                 documentAction?.Invoke(response);
             }
         }
