@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Nest;
 using NLog;
 
@@ -21,6 +22,7 @@ namespace ElasticScanner
                 var client = new ElasticClient(settings);
 
                 _logger.Info("Searching {0} -> {1}", url, index);
+                var watch = Stopwatch.StartNew();
 
                 //var mustClauses = new List<QueryContainer>
                 //{
@@ -104,7 +106,8 @@ namespace ElasticScanner
                     )
                 );
 
-                _logger.Info($"{index} got {response.Hits.Count} hits");
+                watch.Stop();
+                _logger.Info($"{index} got {response.Hits.Count} hits, time: {watch.Elapsed}");
 
                 documentAction?.Invoke(response);
             }
