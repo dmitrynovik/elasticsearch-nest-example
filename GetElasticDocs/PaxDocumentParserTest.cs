@@ -7,7 +7,7 @@ namespace ElasticScanner
 {
     public class PaxDocumentParserTest
     {
-        [Fact(Skip="To Be Fixed")]
+        [Fact]
         public void Must_Return_True_On_Names_Mixup()
         {
             var parser = new PaxDocumentParser();
