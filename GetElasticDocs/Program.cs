@@ -19,7 +19,8 @@ namespace ElasticScanner
             else
             {
                 var search = new Search(url);
-                for (int i = 27; i <= 27; i++)
+                var total = 0;
+                for (int i = 1; i <= 31; i++)
                 {
                     var index = $"logstash-2019.01.{i:D2}";
                     try
@@ -31,6 +32,7 @@ namespace ElasticScanner
                                 var mismatch = new PaxDocumentParser().FindPassengerNameMismatch(hit.Source);
                                 if (!string.IsNullOrEmpty(mismatch.Item2))
                                 {
+                                    total++;
                                     Logger.Error($"|Mismatch found: [{mismatch.Item1}, {mismatch.Item2}]|{mismatch.Item3}|{mismatch.Item4}");
                                     new FileWriter(index).Write(hit.Id, hit.Source.Message);
                                 }
@@ -42,7 +44,7 @@ namespace ElasticScanner
                         Logger.Error(e);
                     }
                 }
-
+                Console.WriteLine("Total: {0} mismatches", total);
             }
 
             Console.WriteLine("Press any key to exit...");
