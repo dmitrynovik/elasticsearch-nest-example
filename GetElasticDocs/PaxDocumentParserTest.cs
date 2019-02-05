@@ -3,7 +3,7 @@ using System.IO;
 using FluentAssertions;
 using Xunit;
 
-namespace ElasticScanner
+namespace FindSinglePassengerNameMixup
 {
     public class PaxDocumentParserTest
     {

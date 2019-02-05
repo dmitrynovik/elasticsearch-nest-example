@@ -7,8 +7,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D5AD3F89-07EF-4628-A424-8D6C3F663D82}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>ElasticScanner</RootNamespace>
-    <AssemblyName>GetElasticDocs</AssemblyName>
+    <RootNamespace>FindSinglePassengerNameMixup</RootNamespace>
+    <AssemblyName>FindSinglePassengerNameMixup</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

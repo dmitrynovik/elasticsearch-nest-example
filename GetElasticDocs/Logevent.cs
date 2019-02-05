@@ -1,6 +1,6 @@
 ﻿using Nest;
 
-namespace ElasticScanner
+namespace FindSinglePassengerNameMixup
 {
     public class logevent
     {

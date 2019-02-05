@@ -2,7 +2,7 @@
 using System.IO;
 using NLog;
 
-namespace ElasticScanner
+namespace FindSinglePassengerNameMixup
 {
     internal class FileWriter
     {

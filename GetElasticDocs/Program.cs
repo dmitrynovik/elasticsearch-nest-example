@@ -2,7 +2,7 @@
 using System.Linq;
 using NLog;
 
-namespace ElasticScanner
+namespace FindSinglePassengerNameMixup
 {
     class Program
     {

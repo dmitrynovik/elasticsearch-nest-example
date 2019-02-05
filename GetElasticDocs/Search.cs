@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Nest;
 using NLog;
 
-namespace ElasticScanner
+namespace FindSinglePassengerNameMixup
 {
     public class Search
     {

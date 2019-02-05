@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using NLog;
 
-namespace ElasticScanner
+namespace FindSinglePassengerNameMixup
 {
     public class PaxDocumentParser
     {
