@@ -40,34 +40,36 @@ namespace FindSinglePassengerNameMixup
                         index = o.Index;
                     }
 
-                    var search = new Search(o.Url);
-                    int total = 0;
-                    try
-                    {
-                        search.SearchAndAnalyze(o.Url, index, "one passenger record", response =>
-                        {
-                            foreach (var hit in response.Hits)
-                            {
-                                var mismatch = new PaxDocumentParser().FindPassengerNameMismatch(hit.Source);
-                                if (!string.IsNullOrEmpty(mismatch.Item2))
-                                {
-                                    total++;
-                                    Logger.Error($"|Mismatch found: [{mismatch.Item1}, {mismatch.Item2}]|{mismatch.Item3}|{mismatch.Item4}");
-                                    new FileWriter(index).Write(hit.Id, hit.Source.Message);
-                                }
-                            }
-                        });
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Error(e);
-                    }
-
+                    var total = SearchIndex(o, index);
                     Console.WriteLine("Total: {0} mismatches", total);
-
-                    Console.WriteLine("Press any key to exit...");
-                    Console.Read();
                 });
+        }
+
+        private static int SearchIndex(Options o, string index)
+        {
+            var search = new Search(o.Url);
+            int total = 0;
+            try
+            {
+                search.SearchAndAnalyze(o.Url, index, "one passenger record", response =>
+                {
+                    foreach (var hit in response.Hits)
+                    {
+                        var mismatch = new PaxDocumentParser().FindPassengerNameMismatch(hit.Source);
+                        if (!string.IsNullOrEmpty(mismatch.Item2))
+                        {
+                            total++;
+                            Logger.Error($"|Mismatch found: [{mismatch.Item1}, {mismatch.Item2}]|{mismatch.Item3}|{mismatch.Item4}");
+                            new FileWriter(index).Write(hit.Id, hit.Source.Message);
+                        }
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+            }
+            return total;
         }
     }
 }
