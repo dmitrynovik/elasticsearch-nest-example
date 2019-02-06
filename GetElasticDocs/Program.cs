@@ -1,31 +1,50 @@
 ﻿using System;
-using System.Linq;
+using CommandLine;
 using NLog;
 
 namespace FindSinglePassengerNameMixup
 {
     class Program
     {
+        public class Options
+        {
+            [Option('u', "url", HelpText = "ElasticSearch url", Required = true)]
+            public string Url { get; set; }
+
+            [Option('i', "index", HelpText = "Index name")]
+            public string Index { get; set; }
+
+            [Option('d', "date", HelpText = "Date")]
+            public string Date { get; set; }
+        }
+
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         static void Main(string[] args)
         {
-            string url = args != null && args.Any() ? args[0] : null;
-            if (url == null)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Please supply ElasticSearch URI command line argument.");
-            }
-            else
-            {
-                var search = new Search(url);
-                var total = 0;
-                for (int i = 1; i <= 31; i++)
+            Parser.Default
+                .ParseArguments<Options>(args)
+                .WithParsed(o =>
                 {
-                    var index = $"logstash-2019.01.{i:D2}";
+                    string index;
+                    if (string.IsNullOrWhiteSpace(o.Index))
+                    {
+                        if (string.IsNullOrWhiteSpace(o.Date) || !DateTime.TryParse(o.Date, out var date))
+                        {
+                            date = DateTime.Now.AddDays(-1);
+                        }
+                        index = $"logstash-{date.Year}.{date.Month}.{date.Day}";
+                    }
+                    else
+                    {
+                        index = o.Index;
+                    }
+
+                    var search = new Search(o.Url);
+                    int total = 0;
                     try
                     {
-                        search.SearchAndAnalyze(url, index, "one passenger record", response =>
+                        search.SearchAndAnalyze(o.Url, index, "one passenger record", response =>
                         {
                             foreach (var hit in response.Hits)
                             {
@@ -43,12 +62,12 @@ namespace FindSinglePassengerNameMixup
                     {
                         Logger.Error(e);
                     }
-                }
-                Console.WriteLine("Total: {0} mismatches", total);
-            }
 
-            Console.WriteLine("Press any key to exit...");
-            Console.Read();
+                    Console.WriteLine("Total: {0} mismatches", total);
+
+                    Console.WriteLine("Press any key to exit...");
+                    Console.Read();
+                });
         }
     }
 }
